@@ -40,7 +40,7 @@ export struct MainPage {
                 .fontColor([$r('sys.color.ohos_id_color_activated')])
             }, item.title)
               .labelStyle({
-                selectedColor: $r('sys.color.black')
+                selectedColor: $r('sys.color.ohos_id_color_activated')
               })
           )
         })
@@ -55,7 +55,7 @@ export struct MainPage {
         }
       })
       .animationDuration(200)
-      .scrollable(false)
+      .scrollable(true)
       .barMode(BarMode.Fixed)
       .onChange((index: number) => {
         this.viewModel.onTabSelected(index);
