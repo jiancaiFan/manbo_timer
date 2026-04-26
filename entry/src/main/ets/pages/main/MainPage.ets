@@ -3,13 +3,15 @@ import { MainState } from '../../redux/main/MainState';
 import { SymbolGlyphModifier } from '@kit.ArkUI';
 import { MainViewModel } from '../../viewmodel/MainViewModel';
 import { TabItem } from '../../model/main/MainUIModel';
+import { HomeViewBuilder } from '../home/HomePage';
+import { MineViewBuilder } from '../mine/MinePage';
+import { TimerViewBuilder } from '../timer/TimerPage';
 
 @ComponentV2
 export struct MainPage {
-
   private tabsController: HdsTabsController = new HdsTabsController();
   private viewModel: MainViewModel = new MainViewModel();
-  @Local state: MainState = this.viewModel.mainState;
+  private state: MainState = this.viewModel.mainState;
 
   aboutToAppear(): void {
     this.viewModel.fetchTabList();
@@ -21,8 +23,13 @@ export struct MainPage {
         ForEach(this.state.uiModel.tabList, (item: TabItem, index: number) => {
           TabContent() {
             Column() {
-              Text(`${this.state.uiModel.currentTab}`)
-              this.tabContentBuilder(index)
+              if (index === 0) {
+                HomeViewBuilder();
+              } else if (index === 1) {
+                TimerViewBuilder();
+              } else if (index === 2) {
+                MineViewBuilder();
+              }
             }
           }
           .tabBar(
@@ -56,56 +63,5 @@ export struct MainPage {
     }
     .width('100%')
     .height('100%')
-  }
-
-  @Builder
-  tabContentBuilder(index: number) {
-    Column() {
-      if (index === 0) {
-        this.HomeView()
-      } else if (index === 1) {
-        this.DiscoverView()
-      } else if (index === 2) {
-        this.MineView()
-      }
-    }
-    .width('100%')
-    .height('100%')
-  }
-
-  @Builder
-  HomeView() {
-    Column() {
-      Text('首页内容')
-        .fontSize(24)
-        .fontWeight(FontWeight.Bold)
-    }
-    .width('100%')
-    .height('100%')
-    .justifyContent(FlexAlign.Center)
-  }
-
-  @Builder
-  DiscoverView() {
-    Column() {
-      Text('发现内容')
-        .fontSize(24)
-        .fontWeight(FontWeight.Bold)
-    }
-    .width('100%')
-    .height('100%')
-    .justifyContent(FlexAlign.Center)
-  }
-
-  @Builder
-  MineView() {
-    Column() {
-      Text('我的页面')
-        .fontSize(24)
-        .fontWeight(FontWeight.Bold)
-    }
-    .width('100%')
-    .height('100%')
-    .justifyContent(FlexAlign.Center)
   }
 }
