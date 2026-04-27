@@ -65,7 +65,7 @@ export struct MainPage {
           }
         })
         .animationDuration(200)
-        .scrollable(true)
+        .scrollable(false)
         .barMode(BarMode.Fixed)
         .onChange((index: number) => {
           this.viewModel.onTabSelected(index);
