@@ -18,10 +18,10 @@ export struct TodayMetricCard {
       .justifyContent(FlexAlign.Center)
       .alignItems(VerticalAlign.Center)
       .backgroundColor(this.iconBgColor)
-      .borderRadius(14)
+      .borderRadius(15)
 
       Blank()
-        .height(8)
+        .height($r('sys.float.ohos_id_elements_margin_vertical_m'))
 
       Column({ space: 2 }) {
         Row({ space: 1 }) {
@@ -45,7 +45,7 @@ export struct TodayMetricCard {
       }
       .alignItems(HorizontalAlign.Center)
     }
-    .padding(8)
+    .padding($r('sys.float.padding_level4'))
     .layoutWeight(1)
     .justifyContent(FlexAlign.Start)
     .alignItems(HorizontalAlign.Center)

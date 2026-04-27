@@ -1,6 +1,5 @@
 @ComponentV2
 export struct HomeQuickStartCard {
-
   @Event onQuickStartClick: () => void
 
   build() {
@@ -34,32 +33,20 @@ export struct HomeQuickStartCard {
       .justifyContent(FlexAlign.Center)
       .layoutWeight(1)
 
-      Stack({ alignContent: Alignment.Center }) {
-        Circle()
-          .width(88)
-          .height(88)
-          .fill('#BDA57D')
-          .opacity(0.10)
-          .blur(14)
-
-        Row() {
-          SymbolGlyph($r('sys.symbol.timer'))
-            .fontSize(28)
-            .fontColor([$r('sys.color.ohos_id_color_text_primary_contrary')])
-        }
-        .width(68)
-        .height(68)
-        .justifyContent(FlexAlign.Center)
-        .alignItems(VerticalAlign.Center)
-        .backgroundColor('#BDA57D')
-        .borderRadius(34)
+      Row() {
+        SymbolGlyph($r('sys.symbol.timer'))
+          .fontSize(28)
+          .fontColor([$r('sys.color.ohos_id_color_text_primary_contrary')])
       }
-      .width(88)
-      .height(88)
+      .width(68)
+      .height(68)
+      .justifyContent(FlexAlign.Center)
+      .alignItems(VerticalAlign.Center)
+      .backgroundColor('#BDA57D')
+      .borderRadius(34)
     }
     .width('100%')
-    .height(128)
-    .padding({ left: 18, right: 16, top: 12, bottom: 12 })
+    .padding({ top: 24, bottom: 24, left: 16, right: 16 })
     .borderRadius(26)
     .linearGradient({
       angle: 0,
@@ -69,12 +56,18 @@ export struct HomeQuickStartCard {
         ['#23201D', 1.00]
       ]
     })
+
+    // 悬浮关键：轻微上移
+    .translate({ x: 0, y: -3 })
+
+    // 悬浮关键：阴影做“更大更软”
     .shadow({
-      radius: 14,
-      color: $r('sys.color.sheet_mask_color'),
+      radius: 24,
+      color: '#30000000',
       offsetX: 0,
-      offsetY: 8
+      offsetY: 14
     })
+
     .onClick(() => {
       this.onQuickStartClick();
     })

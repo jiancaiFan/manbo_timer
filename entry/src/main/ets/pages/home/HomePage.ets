@@ -2,6 +2,7 @@ import { ServiceStatusCapsule } from "../../components/ServiceStatusCapsule";
 import { HomeState } from "../../redux/home/HomeState";
 import { HomeViewModel } from "../../viewmodel/HomeViewModel"
 import { HomeTodayMetricsSection } from "./HomeMetricsSection";
+import { HomeProjectHeader } from "./HomeProjectHeader";
 import { HomeQuickStartCard } from "./HomeQuickStartCard";
 
 @ComponentV2
@@ -11,13 +12,10 @@ struct HomePage {
 
   build() {
     Column({space: 32}) {
-
       ServiceStatusCapsule({ mode: this.state.uiModel.serverMode })
-
       HomeTodayMetricsSection({ state: this.state })
-
       HomeQuickStartCard()
-
+      HomeProjectHeader()
     }
     .width('100%')
     .height('100%')
