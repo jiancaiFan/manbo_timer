@@ -8,18 +8,18 @@ export class HomeUIModel {
   @Trace serverMode: ServiceMode
   @Trace serviceHoursToday: number
   @Trace receptionsToday: number
-  @Trace ratingToday: number
+  @Trace incomeToday: number
   public static Empty = new HomeUIModel(ServiceMode.IDLE, 0, 0, 0)
 
   constructor(
     serverMode: ServiceMode,
     serviceHoursToday: number,
     receptionsToday: number,
-    ratingToday: number
+    incomeToday: number
   ) {
     this.serverMode = serverMode;
     this.serviceHoursToday = serviceHoursToday;
     this.receptionsToday = receptionsToday;
-    this.ratingToday = ratingToday;
+    this. incomeToday =  incomeToday;
   }
 }

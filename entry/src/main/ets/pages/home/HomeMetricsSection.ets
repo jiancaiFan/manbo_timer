@@ -8,7 +8,7 @@ export struct HomeTodayMetricsSection {
   build() {
     Row({ space: 16 }) {
       TodayMetricCard({
-        icon: $r('sys.symbol.timer'),
+        icon: $r('sys.symbol.timer_circle_fill'),
         iconBgColor: '#51deb872',
         valueText: this.state.uiModel.serviceHoursToday.toFixed(1),
         unitText: '时',
@@ -16,7 +16,7 @@ export struct HomeTodayMetricsSection {
       })
 
       TodayMetricCard({
-        icon: $r('sys.symbol.person_2'),
+        icon: $r('sys.symbol.person_3_fill'),
         iconBgColor: '#34718cd6',
         valueText: this.state.uiModel.receptionsToday.toString().padStart(2, '0'),
         unitText: '人',
@@ -24,11 +24,11 @@ export struct HomeTodayMetricsSection {
       })
 
       TodayMetricCard({
-        icon: $r('sys.symbol.star'),
+        icon: $r('sys.symbol.wallet_fill'),
         iconBgColor: '#436fdeab',
-        valueText: this.state.uiModel.ratingToday.toFixed(1),
-        unitText: '分',
-        labelText: '综合评分'
+        valueText: this.state.uiModel.incomeToday.toFixed(2),
+        unitText: '元',
+        labelText: '今日收入'
       })
     }
     .width('100%')
