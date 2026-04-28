@@ -1,5 +1,5 @@
 import { TabItem } from "../../model/main/MainUIModel";
-import { MainViewModel } from "../../viewmodel/MainViewModel"
+import { MainViewModel } from "../../viewmodel/MainViewModel";
 import { curves } from "@kit.ArkUI";
 
 @ComponentV2
@@ -45,7 +45,7 @@ export struct MainBottomNavBar {
         .layoutWeight(this.state.uiModel.currentTab === index ? 1.6 : 1)
         .onClick(() => {
           this.getUIContext().animateTo({
-            curve: curves.springMotion(0.25, 0.75)
+            curve: curves.springMotion(0.45, 0.8)
           }, () => {
             this.viewModel.onTabSelected(index);
           });
