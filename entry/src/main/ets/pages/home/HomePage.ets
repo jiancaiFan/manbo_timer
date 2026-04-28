@@ -1,9 +1,9 @@
-import { ServiceStatusCapsule } from "../../components/ServiceStatusCapsule";
 import { HomeState } from "../../redux/home/HomeState";
 import { HomeViewModel } from "../../viewmodel/HomeViewModel"
 import { HomeTodayMetricsSection } from "./HomeMetricsSection";
 import { HomeProjectHeader } from "./HomeProjectHeader";
 import { HomeQuickStartCard } from "./HomeQuickStartCard";
+import { HomeTopActionBar } from "./HomeTopActionBar";
 
 @ComponentV2
 struct HomePage {
@@ -11,8 +11,10 @@ struct HomePage {
   private state: HomeState = this.viewModel.homeState;
 
   build() {
-    Column({ space: 32 }) {
-      ServiceStatusCapsule({ mode: this.state.uiModel.serverMode })
+    Column({ space: 48 }) {
+      HomeTopActionBar({
+        mode: this.state.uiModel.serverMode
+      })
       HomeTodayMetricsSection({ state: this.state })
       HomeQuickStartCard()
       HomeProjectHeader()

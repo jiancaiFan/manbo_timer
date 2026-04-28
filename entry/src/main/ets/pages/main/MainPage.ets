@@ -1,10 +1,8 @@
 import {
   hdsMaterial,
   HdsNavigation,
-  HdsNavigationTitleMode,
   HdsTabs,
   HdsTabsController,
-  ScrollEffectType
 } from '@kit.UIDesignKit';
 import { MainState } from '../../redux/main/MainState';
 import { SymbolGlyphModifier } from '@kit.ArkUI';
@@ -17,7 +15,6 @@ import { TimerViewBuilder } from '../timer/TimerPage';
 @ComponentV2
 export struct MainPage {
   @Provider('pageInfos') pageInfos: NavPathStack = new NavPathStack();
-  private scroller: Scroller = new Scroller();
   private tabsController: HdsTabsController = new HdsTabsController();
   private viewModel: MainViewModel = new MainViewModel();
   private state: MainState = this.viewModel.mainState;
@@ -64,7 +61,6 @@ export struct MainPage {
             materialLevel: hdsMaterial.MaterialLevel.ADAPTIVE
           }
         })
-        //.animationDuration(200)
         .scrollable(false)
         .barMode(BarMode.Fixed)
         .onChange((index: number) => {
@@ -74,34 +70,9 @@ export struct MainPage {
       .width('100%')
       .height('100%')
     }
-    .titleBar({
-      enableComponentSafeArea: true,
-      style: {
-        scrollEffectOpts: {
-          enableScrollEffect: true,
-          scrollEffectType: ScrollEffectType.COMMON_BLUR,
-        },
-      },
-      content: {
-        title: {
-          mainTitle: 'MainTitle',
-        },
-        menu: {
-          value: [{
-            content: {
-              label: 'menu1',
-              icon: $r('sys.symbol.ohos_wifi'),
-              isEnabled: true,
-              action: () => {
-                console.info(`HDS_NAV HELLO 1`);
-              }
-            }
-          }]
-        },
-      }
-    })
-    .titleMode(HdsNavigationTitleMode.MINI)
+    .mode(NavigationMode.Stack)
+    .hideTitleBar(true)
+    .hideToolBar(true)
     .hideBackButton(true)
-    .bindToScrollable([this.scroller])
   }
 }

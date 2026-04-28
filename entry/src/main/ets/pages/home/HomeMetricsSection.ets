@@ -38,7 +38,6 @@ export struct HomeTodayMetricsSection {
       })
     }
     .width('100%')
-    .margin({ bottom: 48 }) // mb-12
     .alignItems(VerticalAlign.Center)
     .justifyContent(FlexAlign.SpaceBetween)
   }
