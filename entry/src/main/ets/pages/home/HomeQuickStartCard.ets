@@ -44,6 +44,13 @@ export struct HomeQuickStartCard {
       .alignItems(VerticalAlign.Center)
       .backgroundColor('#BDA57D')
       .borderRadius(34)
+
+      .shadow({
+        radius: 16,
+        color: '#7A000000',
+        offsetX: 0,
+        offsetY: 7
+      })
     }
     .width('100%')
     .padding({ top: 24, bottom: 24, left: 16, right: 16 })
@@ -57,15 +64,18 @@ export struct HomeQuickStartCard {
       ]
     })
 
-    // 悬浮关键：轻微上移
-    .translate({ x: 0, y: -3 })
+    .translate({ x: 0, y: -8 })
 
-    // 悬浮关键：阴影做“更大更软”
     .shadow({
       radius: 24,
-      color: '#30000000',
+      color: '#99000000', // 原来偏淡，改为更深更显眼
       offsetX: 0,
-      offsetY: 14
+      offsetY: 12
+    })
+
+    .border({
+      width: 1,
+      color: '#33FFFFFF'
     })
 
     .onClick(() => {
