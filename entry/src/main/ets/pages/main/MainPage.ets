@@ -64,7 +64,7 @@ export struct MainPage {
             materialLevel: hdsMaterial.MaterialLevel.ADAPTIVE
           }
         })
-        .animationDuration(200)
+        //.animationDuration(200)
         .scrollable(false)
         .barMode(BarMode.Fixed)
         .onChange((index: number) => {

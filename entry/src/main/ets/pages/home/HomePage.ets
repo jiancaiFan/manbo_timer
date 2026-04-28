@@ -11,7 +11,7 @@ struct HomePage {
   private state: HomeState = this.viewModel.homeState;
 
   build() {
-    Column({space: 32}) {
+    Column({ space: 32 }) {
       ServiceStatusCapsule({ mode: this.state.uiModel.serverMode })
       HomeTodayMetricsSection({ state: this.state })
       HomeQuickStartCard()

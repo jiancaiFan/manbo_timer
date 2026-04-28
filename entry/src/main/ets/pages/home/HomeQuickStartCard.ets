@@ -6,12 +6,11 @@ export struct HomeQuickStartCard {
 
   @Local isPressed: boolean = false;
   @Local dotOpacity: number = 1.0;
-  @Local cardOpacity: number = 0.0;
-  @Local cardOffsetY: number = 30;
+
+  @Local isVisible: boolean = false;
 
   build() {
     Stack({ alignContent: Alignment.Center }) {
-      // 1. 光晕层：使用 absolute 定位 (position) 彻底解决高度撑开问题
       Row()
         .width('100%')
         .height(LayoutPolicy.wrapContent)
@@ -24,7 +23,6 @@ export struct HomeQuickStartCard {
         .animation({ duration: 500, curve: Curve.EaseInOut })
         .hitTestBehavior(HitTestMode.None)
 
-      // 2. 卡片主体
       Stack() {
         Row() {
           Column({ space: 8 }) {
@@ -52,7 +50,6 @@ export struct HomeQuickStartCard {
           .justifyContent(FlexAlign.Center)
           .layoutWeight(1)
 
-          // 3. Timer 按钮
           Row() {
             SymbolGlyph($r('sys.symbol.timer')).fontSize(24).fontColor([Color.White])
           }
@@ -68,7 +65,6 @@ export struct HomeQuickStartCard {
         .padding({ top: 20, bottom: 20, left: 20, right: 20 })
         .zIndex(2)
 
-        // 4. 右上角高光点缀
         Circle()
           .width(128).height(128).fill('#C5A059')
           .opacity(0.1).blur(60)
@@ -87,10 +83,10 @@ export struct HomeQuickStartCard {
       .animation({ curve: curves.springMotion(0.3, 0.8) })
     }
     .width('100%')
-    .opacity(this.cardOpacity)
-    .translate({ x: 0, y: this.cardOffsetY })
+    // 使用 isVisible 配合三元运算符控制动画状态
+    .opacity(this.isVisible ? 1.0 : 0.0)
+    .translate({ x: 0, y: this.isVisible ? -8 : 30 })
     .onTouch((event: TouchEvent) => {
-      // 极简的手势判断
       if (event.type === TouchType.Down) {
         this.isPressed = true;
       } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
@@ -98,18 +94,14 @@ export struct HomeQuickStartCard {
         if (event.type === TouchType.Up) this.onQuickStartClick();
       }
     })
-    .onVisibleAreaChange([0.0, 1.0], (isVisible: boolean) => {
-      // 极简的进出场判断，去掉冗余的 ratio 判断
-      if (isVisible) {
-        this.dotOpacity = 0.3; // 开启呼吸
-        animateTo({ delay: 150, curve: curves.springMotion(0.4, 0.8) }, () => {
-          this.cardOpacity = 1.0;
-          this.cardOffsetY = -8;
+    .onVisibleAreaChange([0.0, 1.0], (isAreaVisible: boolean) => {
+      if (isAreaVisible) {
+        this.dotOpacity = 0.3;
+        this.getUIContext().animateTo({ delay: 150, curve: curves.springMotion(0.4, 0.8) }, () => {
+          this.isVisible = true;
         });
       } else {
-        // 瞬间重置
-        this.cardOpacity = 0.0;
-        this.cardOffsetY = 30;
+        this.isVisible = false;
       }
     })
   }
