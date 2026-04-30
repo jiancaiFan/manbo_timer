@@ -6,10 +6,10 @@ export class MainViewModel{
   public mainState = MainStore.getState()
 
   public fetchTabList() {
-    MainStore.dispatch(MainAction.FetchTabList)
+    MainStore.dispatch(MainAction.MainTabListFetch)
   }
 
   public onTabSelected(index: number) {
-    MainStore.dispatch(MainAction.SelectTab.setPayload(index))
+    MainStore.dispatch(MainAction.MainTabSelect.setPayload(index))
   }
 }

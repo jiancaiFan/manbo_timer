@@ -8,9 +8,9 @@ export const mainReducer: Reducer<MainState> = (state: MainState, action: Action
   console.log('actionPayload',action.payload)
 
   switch (action.type) {
-    case MainAction.FetchTabList.type:
+    case MainAction.MainTabListFetch.type:
       return async  () => { state.uiModel = MainMapper.toUIModel(); }
-    case MainAction.SelectTab.type:
+    case MainAction.MainTabSelect.type:
       return async  () => {
         state.uiModel.currentTab = action.payload
       }

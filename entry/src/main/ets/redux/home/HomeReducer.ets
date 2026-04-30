@@ -5,7 +5,7 @@ import { HomeState } from "./HomeState";
 export const homeReducer: Reducer<HomeState> = (state: HomeState, action: Action) => {
 
   switch (action.type) {
-    case HomeAction.SelectServiceStatus.type:
+    case HomeAction.HomeServiceStatusSelect.type:
       return async () => { state.uiModel.serverMode = action.payload }
   }
   return null;
