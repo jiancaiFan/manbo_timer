@@ -10,9 +10,9 @@ export class MainMapper{
         selectedIcon: $r('sys.symbol.house_fill')
       },
       {
-        title: '发现',
-        normalIcon: $r('sys.symbol.circle_2'),
-        selectedIcon: $r('sys.symbol.circle_fill')
+        title: '计时',
+        normalIcon: $r('sys.symbol.timer'),
+        selectedIcon: $r('sys.symbol.timer_circle_fill')
       },
       {
         title: '我的',

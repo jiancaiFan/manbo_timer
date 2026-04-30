@@ -44,8 +44,11 @@ export struct MainBottomNavBar {
         .height('100%')
         .layoutWeight(this.state.uiModel.currentTab === index ? 1.6 : 1)
         .onClick(() => {
+          // 【核心动画参数修正】：
+          // 参数1：0.6 -> 对应原版的 duration: 0.6
+          // 参数2：0.6 -> 阻尼比调低，完美对应原版的 bounce: 0.2 (产生明显的果冻回弹感)
           this.getUIContext().animateTo({
-            curve: curves.springMotion(0.45, 0.8)
+            curve: curves.springMotion(0.6, 0.6)
           }, () => {
             this.viewModel.onTabSelected(index);
           });
