@@ -2,6 +2,7 @@ import { HomeState } from "../../redux/home/HomeState";
 import { HomeViewModel } from "../../viewmodel/HomeViewModel"
 import { HomeTodayMetricsSection } from "./HomeMetricsSection";
 import { HomeProjectHeader } from "./HomeProjectHeader";
+import { HomeProjectList } from "./HomeProjectList";
 import { HomeQuickStartCard } from "./HomeQuickStartCard";
 import { HomeTopActionBar } from "./HomeTopActionBar";
 
@@ -18,6 +19,9 @@ struct HomePage {
       HomeTodayMetricsSection({ state: this.state })
       HomeQuickStartCard()
       HomeProjectHeader()
+      HomeProjectList({
+        viewModel: this.viewModel
+      })
     }
     .width('100%')
     .height('100%')

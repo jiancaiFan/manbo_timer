@@ -1,6 +1,11 @@
+import HomeAction from "../redux/home/HomeAction";
 import { HomeStore } from "../redux/home/HomeStore";
 
 export class HomeViewModel {
 
-  public homeState = HomeStore.getState();
+  homeState = HomeStore.getState();
+
+  public fetchHomeProjectList() {
+    HomeStore.dispatch(HomeAction.HOmeProjectListFetch)
+  }
 }

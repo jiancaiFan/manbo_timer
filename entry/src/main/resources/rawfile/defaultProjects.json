@@ -1,0 +1,16 @@
+[
+  {
+    "projectName": "全身推拿",
+    "projectType": "MASSAGE",
+    "projectTotalDuration": 60,
+    "projectIntervalDuration": 15,
+    "projectAmount": 198.00
+  },
+  {
+    "projectName": "局部推拿",
+    "projectType": "MASSAGE",
+    "projectTotalDuration": 40,
+    "projectIntervalDuration": 20,
+    "projectAmount": 99.00
+  }
+]

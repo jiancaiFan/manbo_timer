@@ -2,7 +2,7 @@ import { MainUIModel } from "../../model/main/MainUIModel";
 
 export class MainMapper{
 
-  public static toUIModel(): MainUIModel {
+  public static async toUIModel(): Promise<MainUIModel> {
     return new MainUIModel([
       {
         title: '首页',
