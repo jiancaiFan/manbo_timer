@@ -34,10 +34,8 @@ export struct HomeProjectHeader {
       .stateStyles({
         normal: {
           .scale({ x: 1.0, y: 1.0 })
-          // 移除旋转，与 Web 保持一致
         },
         pressed: {
-          // 缩放改为 0.98，移除旋转，与 Web 的 whileTap={{ scale: 0.98 }} 一致
           .scale({ x: 0.98, y: 0.98 })
         }
       })
@@ -49,7 +47,6 @@ export struct HomeProjectHeader {
     .width('100%')
     .alignItems(VerticalAlign.Center)
     .opacity(this.isVisible ? 1.0 : 0.0)
-    // 【修复点】：改为 Y 轴平移，与 Web 端 initial={{ y: 20 }} 保持一致
     .translate({ y: this.isVisible ? 0 : 20 })
     .onVisibleAreaChange([0.0, 1.0], (isVisible: boolean) => {
       if (isVisible) {

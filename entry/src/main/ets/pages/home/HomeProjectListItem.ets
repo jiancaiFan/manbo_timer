@@ -112,8 +112,7 @@ export struct HomeProjectListItem {
     .animation({ duration: 500, curve: Curve.FastOutSlowIn })
     .clip(true)
     .opacity(this.isVisible ? 1.0 : 0.0)
-    // 【核心调整】：将位移距离从 24 加大到 40，让向上冒的动作幅度更大、更明显！
-    .translate({ y: this.isVisible ? 0 : 40 })
+    .translate({ y: this.isVisible ? 0 : 24 })
     .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.98 })
     .onTouch((event: TouchEvent) => {
       if (event.type === TouchType.Down) {
@@ -125,7 +124,7 @@ export struct HomeProjectListItem {
     .onVisibleAreaChange([0.0, 0.01], (isAreaVisible: boolean, currentRatio: number) => {
       if (isAreaVisible && currentRatio >= 0.01) {
 
-        let delayTime = this.index < 6 ? (400 + this.index * 80) : 0;
+        let delayTime = this.index < 10 ? (650 + this.index * 100) : 0;
 
         this.getUIContext().animateTo({
           delay: delayTime,
