@@ -5,7 +5,7 @@ import { MainState } from "./MainState";
 
 export const mainReducer: Reducer<MainState> = (state: MainState, action: Action) => {
 
-  console.log('actionPayload',action.payload)
+  console.log('actionPayload',`main: ${action.payload}`)
 
   switch (action.type) {
     case MainAction.MainTabListFetch.type:

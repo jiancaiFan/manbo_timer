@@ -12,26 +12,32 @@ struct HomePage {
   private state: HomeState = this.viewModel.homeState;
 
   build() {
-    Column({ space: 48 }) {
-      HomeTopActionBar({
-        mode: this.state.uiModel.serverMode
-      })
-      HomeTodayMetricsSection({ state: this.state })
-      HomeQuickStartCard()
-      HomeProjectHeader()
-      HomeProjectList({
-        viewModel: this.viewModel
-      })
+    Scroll() {
+      Column({ space: 48 }) {
+        HomeTopActionBar({
+          mode: this.state.uiModel.serverMode
+        })
+        HomeTodayMetricsSection({ state: this.state })
+        HomeQuickStartCard()
+        HomeProjectHeader()
+
+        HomeProjectList({
+          state: this.state,
+          onFetchProjectsClick: () => {
+            this.viewModel.fetchHomeProjectList();
+          }
+        })
+      }
+      .width('100%')
+      .padding({ right: 16, left: 16, bottom: 120 })
+      .justifyContent(FlexAlign.Start)
+      .alignItems(HorizontalAlign.Start)
     }
     .width('100%')
     .height('100%')
-    .padding({
-      right: 16,
-      left: 16,
-      bottom: 16
-    })
-    .justifyContent(FlexAlign.Start)
-    .alignItems(HorizontalAlign.Start)
+    .scrollBar(BarState.Off)
+    .align(Alignment.Top)
+    .edgeEffect(EdgeEffect.Spring)
   }
 }
 
