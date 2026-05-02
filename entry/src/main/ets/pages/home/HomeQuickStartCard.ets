@@ -83,9 +83,9 @@ export struct HomeQuickStartCard {
       .animation({ curve: curves.springMotion(0.3, 0.8) })
     }
     .width('100%')
-    // 使用 isVisible 配合三元运算符控制动画状态
     .opacity(this.isVisible ? 1.0 : 0.0)
     .translate({ x: 0, y: this.isVisible ? -8 : 30 })
+    .scale({ x: this.isVisible ? 1.0 : 0.98, y: this.isVisible ? 1.0 : 0.98 })
     .onTouch((event: TouchEvent) => {
       if (event.type === TouchType.Down) {
         this.isPressed = true;
@@ -97,7 +97,7 @@ export struct HomeQuickStartCard {
     .onVisibleAreaChange([0.0, 1.0], (isAreaVisible: boolean) => {
       if (isAreaVisible) {
         this.dotOpacity = 0.3;
-        this.getUIContext().animateTo({ delay: 150, curve: curves.springMotion(0.4, 0.8) }, () => {
+        this.getUIContext().animateTo({ delay: 450, curve: curves.springMotion(0.4, 0.8) }, () => {
           this.isVisible = true;
         });
       } else {

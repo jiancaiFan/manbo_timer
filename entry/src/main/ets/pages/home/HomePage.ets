@@ -13,7 +13,7 @@ struct HomePage {
 
   build() {
     Scroll() {
-      Column({ space: 48 }) {
+      Column({ space: 40 }) {
         HomeTopActionBar({
           mode: this.state.uiModel.serverMode
         })
