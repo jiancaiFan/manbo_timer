@@ -15,13 +15,17 @@ struct HomePage {
   private state: HomeState = this.viewModel.homeState;
   private dialogContent: ComponentContent<DialogParams> | null = null;
 
-  openDialog() {
+  private async openDialog() {
     const uiContext = this.getUIContext();
     const promptAction = uiContext.getPromptAction();
 
-    const closeDialog = () => {
+    const closeDialog = async () => {
       if (this.dialogContent !== null) {
-        promptAction.closeCustomDialog(this.dialogContent);
+        try {
+          await promptAction.closeCustomDialog(this.dialogContent);
+        } catch (error) {
+          console.error("关闭弹窗失败:", JSON.stringify(error));
+        }
         this.dialogContent = null;
       }
     };
@@ -33,24 +37,20 @@ struct HomePage {
       closeDialog();
     };
 
-    this.dialogContent = new ComponentContent(
-      uiContext,
-      wrapBuilder(buildNewCreateProjectDialog),
-      params
-    );
+    try {
+      this.dialogContent = new ComponentContent(
+        uiContext,
+        wrapBuilder(buildNewCreateProjectDialog),
+        params
+      );
 
-    // 呼出系统原生对话框，完全适配 V2
-    promptAction.openCustomDialog(this.dialogContent, {
-      alignment: DialogAlignment.Bottom, // 从屏幕底部升起
-      maskColor: 'rgba(0,0,0,0.4)',      // 灰色半透明遮罩
-      autoCancel: true,                  // 允许点击遮罩关闭
-      onWillDismiss: (dismissAction) => {
-        // 允许通过物理返回键或点击遮罩关闭
-        if (dismissAction.reason === DismissReason.TOUCH_OUTSIDE || dismissAction.reason === DismissReason.PRESS_BACK) {
-          closeDialog();
-        }
-      }
-    });
+      await promptAction.openCustomDialog(this.dialogContent, {
+        alignment: DialogAlignment.Bottom,
+        maskColor: 'rgba(0,0,0,0.4)'
+      });
+    } catch (error) {
+      console.error("打开弹窗失败:", JSON.stringify(error));
+    }
   }
 
   build() {

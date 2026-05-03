@@ -22,27 +22,12 @@ export struct NewCreateProjectDialog {
   @Local projectPrice: string = "";
   @Local projectDuration: string = "";
   @Local projectInterval: string = "";
-  // 内部元素的错落出场控制 (对标 Web delay)
-  @Local animStates: boolean[] = [false, false, false, false, false, false];
   @Local isCloseBtnPressed: boolean = false;
   @Local isSubmitPressed: boolean = false;
-
-  aboutToAppear() {
-    // 精准对标 Web 端 Framer Motion 的延时入场
-    setTimeout(() => {
-      animateTo({ curve: curves.springMotion(0.6, 0.8) }, () => this.animStates[0] = true);
-    }, 100); // Tabs
-    for (let i = 0; i < 4; i++) {
-      setTimeout(() => {
-        animateTo({ curve: curves.springMotion(0.6, 0.8) }, () => this.animStates[i+1] = true);
-      }, 100 + i * 50); // Inputs
-    }
-    setTimeout(() => {
-      animateTo({ curve: curves.springMotion(0.6, 0.8) }, () => this.animStates[5] = true);
-    }, 500); // Button
-  }
+  @Local isVisible: boolean = false;
 
   build() {
+    // ArkTS 严格模式：build() 内不能有任何变量声明，直接写 UI 组件
     Stack({ alignContent: Alignment.Top }) {
       Column() {
         this.Header()
@@ -55,11 +40,12 @@ export struct NewCreateProjectDialog {
           }
         })
           .margin({ bottom: 24 })
-          .opacity(this.animStates[0] ? 1 : 0)
-          .translate({ y: this.animStates[0] ? 0 : 20 })
+          .opacity(this.isVisible ? 1 : 0)
+          .translate({ y: this.isVisible ? 0 : 20 })
+          // Delay: 100ms
+          .animation({ curve: curves.springMotion(0.6, 0.8), delay: 100 })
 
         Column({ space: 16 }) {
-          // 使用 Stack 包装以附加独立的入场动画
           Stack() {
             FormInputRow({
               label: "项目名称",
@@ -68,7 +54,8 @@ export struct NewCreateProjectDialog {
               valueChange: (v) => this.projectName = v
             })
           }
-          .opacity(this.animStates[1] ? 1 : 0).translate({ y: this.animStates[1] ? 0 : 20 })
+          .opacity(this.isVisible ? 1 : 0).translate({ y: this.isVisible ? 0 : 20 })
+          .animation({ curve: curves.springMotion(0.6, 0.8), delay: 100 })
 
           Stack() {
             FormInputRow({
@@ -79,7 +66,8 @@ export struct NewCreateProjectDialog {
               inputType: InputType.NUMBER_DECIMAL
             })
           }
-          .opacity(this.animStates[2] ? 1 : 0).translate({ y: this.animStates[2] ? 0 : 20 })
+          .opacity(this.isVisible ? 1 : 0).translate({ y: this.isVisible ? 0 : 20 })
+          .animation({ curve: curves.springMotion(0.6, 0.8), delay: 150 })
 
           Stack() {
             FormInputRow({
@@ -90,7 +78,8 @@ export struct NewCreateProjectDialog {
               inputType: InputType.Number
             })
           }
-          .opacity(this.animStates[3] ? 1 : 0).translate({ y: this.animStates[3] ? 0 : 20 })
+          .opacity(this.isVisible ? 1 : 0).translate({ y: this.isVisible ? 0 : 20 })
+          .animation({ curve: curves.springMotion(0.6, 0.8), delay: 200 })
 
           Stack() {
             FormInputRow({
@@ -101,27 +90,32 @@ export struct NewCreateProjectDialog {
               inputType: InputType.Number
             })
           }
-          .opacity(this.animStates[4] ? 1 : 0).translate({ y: this.animStates[4] ? 0 : 20 })
+          .opacity(this.isVisible ? 1 : 0).translate({ y: this.isVisible ? 0 : 20 })
+          .animation({ curve: curves.springMotion(0.6, 0.8), delay: 250 })
         }.margin({ bottom: 32 })
 
-        Button({ type: ButtonType.Normal }) {
-          Text("确认添加")
-            .fontColor($r('sys.color.comp_background_list_card'))
-            .fontSize(16)
-            .fontWeight(FontWeight.Bolder)
-            .letterSpacing(2)
+        // 给包裹按钮的 Stack 添加出场动画，内部 Button ��责点击缩放
+        Stack() {
+          Button({ type: ButtonType.Normal }) {
+            Text("确认添加")
+              .fontColor($r('sys.color.comp_background_list_card'))
+              .fontSize(16)
+              .fontWeight(FontWeight.Bolder)
+              .letterSpacing(2)
+          }
+          .width('100%')
+          .height(64)
+          .backgroundColor($r('sys.color.black'))
+          .borderRadius(32)
+          .shadow({ radius: 24, color: 'rgba(0,0,0,0.2)', offsetY: 12 })
+          .scale({ x: this.isSubmitPressed ? 0.96 : 1, y: this.isSubmitPressed ? 0.96 : 1 })
+          .animation({ curve: curves.springMotion(0.3, 0.6) })
+          .onTouch((e) => this.isSubmitPressed = (e.type === TouchType.Down))
+          .onClick(() => this.handleSubmit())
         }
-        .width('100%')
-        .height(64)
-        .backgroundColor($r('sys.color.black'))
-        .borderRadius(32)
-        .shadow({ radius: 24, color: 'rgba(0,0,0,0.2)', offsetY: 12 })
-        .scale({ x: this.isSubmitPressed ? 0.96 : 1, y: this.isSubmitPressed ? 0.96 : 1 })
-        .animation({ curve: curves.springMotion(0.3, 0.6) })
-        .onTouch((e) => this.isSubmitPressed = (e.type === TouchType.Down))
-        .onClick(() => this.handleSubmit())
-        .opacity(this.animStates[5] ? 1 : 0)
-        .translate({ y: this.animStates[5] ? 0 : 20 })
+        .opacity(this.isVisible ? 1 : 0)
+        .translate({ y: this.isVisible ? 0 : 20 })
+        .animation({ curve: curves.springMotion(0.6, 0.8), delay: 500 })
 
       }
       .padding({
@@ -131,7 +125,6 @@ export struct NewCreateProjectDialog {
         bottom: 40
       })
 
-      // 顶部极简指示条 (绝对定位居中)
       Row()
         .width(36)
         .height(4)
@@ -140,14 +133,14 @@ export struct NewCreateProjectDialog {
         .margin({ top: 12 })
     }
     .width('100%')
-    // ==========================================
-    // 核心质感：复刻 bg-white/95 backdrop-blur-3xl
-    // ==========================================
     .backgroundColor('rgba(255, 255, 255, 0.95)')
-    .backgroundBlurStyle(BlurStyle.Thick) // 系统级厚重毛玻璃
+    .backgroundBlurStyle(BlurStyle.Thick)
     .borderRadius({ topLeft: 44, topRight: 44 })
     .border({ width: { top: 1 }, color: 'rgba(255, 255, 255, 0.6)' })
     .shadow({ radius: 80, color: 'rgba(0,0,0,0.15)', offsetY: -15 })
+    .onVisibleAreaChange([0.0, 1.0], (isAreaVisible: boolean) => {
+      this.isVisible = isAreaVisible;
+    })
   }
 
   @Builder
@@ -166,9 +159,12 @@ export struct NewCreateProjectDialog {
         }.margin({ top: 4 })
       }.alignItems(HorizontalAlign.Start)
 
-      // 圆形关闭按钮
+      // 修复：使用标准的关闭图标
       Row() {
-        Path().commands('M 5 5 L 15 15 M 15 5 L 5 15').strokeWidth(2.5).stroke($r('sys.color.black'))
+        Image($r('sys.media.ohos_ic_public_cancel'))
+          .width(20)
+          .height(20)
+          .fillColor($r('sys.color.black'))
       }
       .width(40)
       .height(40)
