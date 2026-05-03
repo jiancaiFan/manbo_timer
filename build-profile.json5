@@ -7,11 +7,11 @@
         "material": {
           "certpath": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A4858C738E8ABA69EB5281B1B4942FE266210687D8F73F28F1DDDD22DBD44B58AFB967E2122B2",
+          "keyPassword": "0000001B865E81509701D4FC40271D5D42AE8E29CCAF909D2A9B55362CA6C13223E9C41AA438EDD12C3661",
           "profile": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.p12",
-          "storePassword": "0000001A90E4F5310B5A1415A52B4137C899183854EC937E50F60639D7F8332FA2A84964A67091D1081E"
+          "storePassword": "0000001B1E634D643086AAD33AAF3C3ED76EBE972E2F42BEF0C567960877ACA38B9643AEBBBDF2B8E5578F"
         }
       }
     ],
