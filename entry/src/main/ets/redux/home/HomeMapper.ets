@@ -6,10 +6,10 @@ export class HomeMapper {
       try {
         resolve([
           new ProjectItem('全身经络', ProjectType.MASSAGE, 60, 15, 298),
-          new ProjectItem('局部肩颈', ProjectType.THERAPY, 30, 10, 128), // 原数据是理疗
+          new ProjectItem('局部肩颈', ProjectType.THERAPY, 30, 10, 128),
           new ProjectItem('足底反射', ProjectType.MASSAGE, 45, 12, 198),
-          new ProjectItem('专业刮痧', ProjectType.GUA_SHA, 30, 10, 158), // 原数据是刮痧
-          new ProjectItem('深层拔罐', ProjectType.CUPPING, 30, 10, 138), // 原数据是拔罐
+          new ProjectItem('专业刮痧', ProjectType.GUA_SHA, 30, 10, 158),
+          new ProjectItem('深层拔罐', ProjectType.CUPPING, 30, 10, 138),
           new ProjectItem('尊享推油', ProjectType.MASSAGE, 90, 20, 398)
         ]);
       } catch (error) {
@@ -17,5 +17,9 @@ export class HomeMapper {
         reject(new Error("获取失败"));
       }
     })
+  }
+
+  public static async toDialogTabList(): Promise<string[]> {
+    return ["按摩", "刮痧", "拔罐", "理疗"];
   }
 }

@@ -4,10 +4,10 @@ export enum ServiceMode {
 }
 
 export enum ProjectType {
-  MASSAGE = 'MASSAGE',       // 按摩
-  GUA_SHA = 'GUA_SHA',       // 刮痧
-  CUPPING = 'CUPPING',       // 拔罐
-  THERAPY = 'THERAPY'        // 理疗
+  MASSAGE = 'MASSAGE',
+  GUA_SHA = 'GUA_SHA',
+  CUPPING = 'CUPPING',
+  THERAPY = 'THERAPY'
 }
 
 @ObservedV2
@@ -17,20 +17,27 @@ export class HomeUIModel {
   @Trace receptionsToday: number;
   @Trace incomeToday: number;
   @Trace projectList: ProjectItem[]|undefined;
-  public static Empty = new HomeUIModel(ServiceMode.IDLE, 0, 0, 0, undefined)
+  @Trace dialogTabList: string[];
+  @Trace currentDialogTab: number;
+
+  public static Empty = new HomeUIModel(ServiceMode.IDLE, 0, 0, 0, undefined, [], 0)
 
   constructor(
     serverMode: ServiceMode,
     serviceHoursToday: number,
     receptionsToday: number,
     incomeToday: number,
-    projectList: ProjectItem[]|undefined
+    projectList: ProjectItem[]|undefined,
+    dialogTabList: string[],
+    currentDialogTab: number
   ) {
     this.serverMode = serverMode;
     this.serviceHoursToday = serviceHoursToday;
     this.receptionsToday = receptionsToday;
     this.incomeToday = incomeToday;
     this.projectList = projectList;
+    this.dialogTabList = dialogTabList;
+    this.currentDialogTab = currentDialogTab;
   }
 }
 

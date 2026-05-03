@@ -1,9 +1,9 @@
 import { curves } from "@kit.ArkUI";
 import { ProjectItem, ProjectType } from "../model/home/HomeUIModel";
+import { HomeViewModel } from "../viewmodel/HomeViewModel";
 import { FormInputRow } from "./FormInputRow";
 import { SegmentedTab } from "./SegmentedTab";
 
-const TYPES = ["按摩", "刮痧", "拔罐", "理疗"];
 const TYPE_MAP: Record<string, ProjectType> = {
   "按摩": ProjectType.MASSAGE,
   "刮痧": ProjectType.GUA_SHA,
@@ -13,11 +13,11 @@ const TYPE_MAP: Record<string, ProjectType> = {
 
 @ComponentV2
 export struct NewCreateProjectDialog {
-  @Event onClose: () => void = () => {
-  };
-  @Event onConfirm: (project: ProjectItem) => void = () => {
-  };
+  @Param @Require viewModel: HomeViewModel;
+  @Event onClose: () => void = () => {};
+  @Event onConfirm: (project: ProjectItem) => void = () => {};
   @Local selectedIndex: number = 0;
+
   @Local projectName: string = "";
   @Local projectPrice: string = "";
   @Local projectDuration: string = "";
@@ -27,13 +27,14 @@ export struct NewCreateProjectDialog {
   @Local isVisible: boolean = false;
 
   build() {
-    // ArkTS 严格模式：build() 内不能有任何变量声明，直接写 UI 组件
     Stack({ alignContent: Alignment.Top }) {
       Column() {
         this.Header()
 
         SegmentedTab({
-          tabs: TYPES,
+          // 分类数据依然走 Redux 全局，因为 HomePage 加载时已经获取好了
+          tabs: this.viewModel.homeState.uiModel.dialogTabList,
+          // 选中索引走局部状态，点击瞬间立刻响应
           selectedIndex: this.selectedIndex,
           selectedIndexChange: (index: number) => {
             this.selectedIndex = index;
@@ -42,7 +43,6 @@ export struct NewCreateProjectDialog {
           .margin({ bottom: 24 })
           .opacity(this.isVisible ? 1 : 0)
           .translate({ y: this.isVisible ? 0 : 20 })
-          // Delay: 100ms
           .animation({ curve: curves.springMotion(0.6, 0.8), delay: 100 })
 
         Column({ space: 16 }) {
@@ -94,7 +94,6 @@ export struct NewCreateProjectDialog {
           .animation({ curve: curves.springMotion(0.6, 0.8), delay: 250 })
         }.margin({ bottom: 32 })
 
-        // 给包裹按钮的 Stack 添加出场动画，内部 Button ��责点击缩放
         Stack() {
           Button({ type: ButtonType.Normal }) {
             Text("确认添加")
@@ -118,19 +117,10 @@ export struct NewCreateProjectDialog {
         .animation({ curve: curves.springMotion(0.6, 0.8), delay: 500 })
 
       }
-      .padding({
-        left: 36,
-        right: 36,
-        top: 36,
-        bottom: 40
-      })
+      .padding({ left: 36, right: 36, top: 36, bottom: 40 })
 
       Row()
-        .width(36)
-        .height(4)
-        .backgroundColor('rgba(0,0,0,0.1)')
-        .borderRadius(2)
-        .margin({ top: 12 })
+        .width(36).height(4).backgroundColor('rgba(0,0,0,0.1)').borderRadius(2).margin({ top: 12 })
     }
     .width('100%')
     .backgroundColor('rgba(255, 255, 255, 0.95)')
@@ -159,7 +149,6 @@ export struct NewCreateProjectDialog {
         }.margin({ top: 4 })
       }.alignItems(HorizontalAlign.Start)
 
-      // 修复：使用标准的关闭图标
       Row() {
         Image($r('sys.media.ohos_ic_public_cancel'))
           .width(20)
@@ -182,25 +171,34 @@ export struct NewCreateProjectDialog {
   }
 
   handleSubmit() {
-    const typeStr = TYPES[this.selectedIndex];
+    // 提交时，使用内部的 @Local selectedIndex 去读 Redux 里的文字数据
+    const typeStr: string = this.viewModel.homeState.uiModel.dialogTabList[this.selectedIndex];
+
     const newItem = new ProjectItem(
-      this.projectName, TYPE_MAP[typeStr] ?? ProjectType.MASSAGE,
-      Number(this.projectDuration) || 0, Number(this.projectInterval) || 0, Number(this.projectPrice) || 0
+      this.projectName,
+      TYPE_MAP[typeStr] ?? ProjectType.MASSAGE,
+      Number(this.projectDuration) || 0,
+      Number(this.projectInterval) || 0,
+      Number(this.projectPrice) || 0
     );
     this.onConfirm(newItem);
   }
 }
 
 export class DialogParams {
-  onClose: () => void = () => {
-  };
-  onConfirm: (project: ProjectItem) => void = () => {
-  };
+  viewModel: HomeViewModel;
+  onClose: () => void = () => {};
+  onConfirm: (project: ProjectItem) => void = () => {};
+
+  constructor(viewModel: HomeViewModel) {
+    this.viewModel = viewModel;
+  }
 }
 
 @Builder
 export function buildNewCreateProjectDialog(params: DialogParams) {
   NewCreateProjectDialog({
+    viewModel: params.viewModel,
     onClose: params.onClose,
     onConfirm: params.onConfirm
   })

@@ -8,4 +8,8 @@ export class HomeViewModel {
   public fetchHomeProjectList() {
     HomeStore.dispatch(HomeAction.HOmeProjectListFetch)
   }
+
+  public fetchDialogTabList() {
+    HomeStore.dispatch(HomeAction.HomeDialogTabListFetch);
+  }
 }

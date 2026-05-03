@@ -2,10 +2,9 @@ import { curves } from "@kit.ArkUI";
 
 @ComponentV2
 export struct SegmentedTab {
-  @Param tabs: string[] = [];
-  @Param selectedIndex: number = 0;
-  @Event selectedIndexChange: (index: number) => void = () => {
-  };
+  @Param @Require tabs: string[];
+  @Param @Require selectedIndex: number;
+  @Event selectedIndexChange: (index: number) => void;
 
   build() {
     Row() {

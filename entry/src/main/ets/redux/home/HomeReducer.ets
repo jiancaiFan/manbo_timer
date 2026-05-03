@@ -2,6 +2,7 @@ import { Reducer, Action } from "@hadss/state_store";
 import HomeAction from "./HomeAction";
 import { HomeState } from "./HomeState";
 import { HomeSideEffect } from "./HomeSideEffect";
+import { HomeMapper } from "./HomeMapper";
 
 export const homeReducer: Reducer<HomeState> = (state: HomeState, action: Action) => {
 
@@ -16,6 +17,9 @@ export const homeReducer: Reducer<HomeState> = (state: HomeState, action: Action
 
     case HomeAction.HomeProjectListLoad.type:
       return async () => { state.uiModel.projectList = action.payload; }
+
+    case HomeAction.HomeDialogTabListFetch.type:
+      return async () => { state.uiModel.dialogTabList = await HomeMapper.toDialogTabList(); }
   }
   return null;
 };

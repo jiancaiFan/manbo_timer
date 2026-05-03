@@ -30,7 +30,7 @@ struct HomePage {
       }
     };
 
-    const params = new DialogParams();
+    const params = new DialogParams(this.viewModel);
     params.onClose = closeDialog;
     params.onConfirm = (project: ProjectItem) => {
       console.info("接收到新增项目:", project.projectName);
@@ -51,6 +51,10 @@ struct HomePage {
     } catch (error) {
       console.error("打开弹窗失败:", JSON.stringify(error));
     }
+  }
+
+  aboutToAppear(): void {
+    this.viewModel.fetchDialogTabList();
   }
 
   build() {
