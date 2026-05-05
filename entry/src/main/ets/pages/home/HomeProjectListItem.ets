@@ -1,10 +1,14 @@
 import { ProjectItem, ProjectType } from "../../model/home/HomeUIModel";
 import { curves } from "@kit.ArkUI";
+import PermissionUtil from "../../utils/RequestPermissions";
+import { GlobalContext } from "../../common/GlobalContext";
+import { VibrationManager } from "../../utils/VibrationManager";
 
 @ComponentV2
 export struct HomeProjectListItem {
   @Param @Require item: ProjectItem;
   @Param index: number = 0;
+  @Event onItemClicked: (item: ProjectItem) => void;
 
   @Local isPressed: boolean = false;
   @Local isVisible: boolean = false;
@@ -119,6 +123,19 @@ export struct HomeProjectListItem {
         this.isPressed = true;
       } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
         this.isPressed = false;
+      }
+    })
+    .onClick( async  () => {
+      try {
+        let isGranted = await PermissionUtil.checkAndRequestNotification(GlobalContext.getInstance().getContext());
+        if (isGranted) {
+          VibrationManager.vibrateClick();
+          this.onItemClicked(this.item);
+        } else {
+          this.getUIContext().getPromptAction().showToast({ message: '通知权限被拒绝，请在设置中开启！' });
+        }
+      } catch (error) {
+        console.error(`Get context or request notification failed: ${JSON.stringify(error)}`);
       }
     })
     .onVisibleAreaChange([0.0, 0.01], (isAreaVisible: boolean, currentRatio: number) => {

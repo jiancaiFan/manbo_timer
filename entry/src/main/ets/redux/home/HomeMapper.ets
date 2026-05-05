@@ -6,7 +6,7 @@ export class HomeMapper {
       try {
         resolve([
           new ProjectItem('全身经络', ProjectType.MASSAGE, 60, 15, 298),
-          new ProjectItem('局部肩颈', ProjectType.THERAPY, 30, 10, 128),
+          new ProjectItem('局部肩颈', ProjectType.THERAPY, 30, 5, 128),
           new ProjectItem('足底反射', ProjectType.MASSAGE, 45, 12, 198),
           new ProjectItem('专业刮痧', ProjectType.GUA_SHA, 30, 10, 158),
           new ProjectItem('深层拔罐', ProjectType.CUPPING, 30, 10, 138),

@@ -8,6 +8,10 @@ import { HomeProjectList } from "./HomeProjectList";
 import { HomeQuickStartCard } from "./HomeQuickStartCard";
 import { HomeTopActionBar } from "./HomeTopActionBar";
 import { ComponentContent } from "@kit.ArkUI";
+import { MainStore } from "../../redux/main/MainStore";
+import MainAction from "../../redux/main/MainAction";
+import { CountdownManager } from "../../utils/CountdownManager";
+import { GlobalContext } from "../../common/GlobalContext";
 
 @ComponentV2
 struct HomePage {
@@ -74,6 +78,13 @@ struct HomePage {
           state: this.state,
           onFetchProjectsClick: () => {
             this.viewModel.fetchHomeProjectList();
+          },
+          onItemClicked: (item: ProjectItem) => {
+            MainStore.dispatch(MainAction.MainTabSelect.setPayload(1));
+            let manager = CountdownManager.getInstance(GlobalContext.getInstance().getContext());
+            manager.init().then(() => {
+              manager.start(item);
+            });
           }
         })
       }

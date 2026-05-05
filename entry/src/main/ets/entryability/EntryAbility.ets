@@ -2,12 +2,14 @@ import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.Ab
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { GlobalContext } from '../common/GlobalContext';
+import { CountdownManager } from '../utils/CountdownManager';
 
 const DOMAIN = 0x0000;
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     GlobalContext.getInstance().initContext(this.context);
+    CountdownManager.getInstance(this.context).init();
     try {
       this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     } catch (err) {
@@ -18,6 +20,7 @@ export default class EntryAbility extends UIAbility {
 
   onDestroy(): void {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onDestroy');
+    CountdownManager.getInstance(this.context).release();
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
@@ -41,6 +44,7 @@ export default class EntryAbility extends UIAbility {
   onForeground(): void {
     // Ability has brought to foreground
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onForeground');
+    CountdownManager.getInstance(this.context).syncCurrentTime();
   }
 
   onBackground(): void {

@@ -6,6 +6,7 @@ import { HomeProjectListItem } from "./HomeProjectListItem";
 export struct HomeProjectList {
   @Param @Require state: HomeState;
   @Event onFetchProjectsClick: () => void;
+  @Event onItemClicked: (item: ProjectItem) => void;
 
   aboutToAppear(): void {
     this.onFetchProjectsClick();
@@ -17,7 +18,8 @@ export struct HomeProjectList {
         .each((obj: RepeatItem<ProjectItem>) => {
           HomeProjectListItem({
             item: obj.item,
-            index: obj.index
+            index: obj.index,
+            onItemClicked: this.onItemClicked
           })
         })
     }
