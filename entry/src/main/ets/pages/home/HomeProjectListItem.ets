@@ -66,7 +66,7 @@ export struct HomeProjectListItem {
         Text(this.item.projectName)
           .fontSize(17)
           .fontWeight(FontWeight.Bold)
-          .fontColor('#1D1D1F')
+          .fontColor($r('sys.color.ohos_id_color_primary'))
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .letterSpacing(-0.5)
@@ -86,7 +86,7 @@ export struct HomeProjectListItem {
         Text(`￥${this.item.projectAmount}`)
           .fontSize(19)
           .fontWeight(900)
-          .fontColor(Color.Black)
+          .fontColor($r('sys.color.ohos_id_color_primary'))
           .letterSpacing(-1)
           .lineHeight(19)
       }
@@ -105,7 +105,7 @@ export struct HomeProjectListItem {
     }
     .width('100%')
     .padding({ top: 16, bottom: 16, left: 16, right: 24 })
-    .backgroundColor(Color.White)
+    .backgroundColor($r('sys.color.ohos_fa_list_card_bg'))
     .borderRadius(40)
     .border({ width: 1, color: this.isPressed ? 'rgba(0,0,0,0.06)' : 'rgba(0,0,0,0.03)' })
     .shadow({
@@ -156,12 +156,12 @@ export struct HomeProjectListItem {
   }
 
   @Builder
-  TagBuilder(text: string) {
+  private TagBuilder(text: string) {
     Row() {
       Text(text)
         .fontSize(10)
         .fontWeight(FontWeight.Bold)
-        .fontColor('rgba(0,0,0,0.4)')
+        .fontColor($r('sys.color.ohos_id_color_secondary'))
         .letterSpacing(-0.5)
     }
     .padding({ top: 4, bottom: 4, left: 10, right: 10 })
