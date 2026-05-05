@@ -33,15 +33,17 @@ export class CountdownManager {
   @Trace public state: CountdownState = CountdownState.IDLE;
   @Trace public remainingSeconds: number = 0;
   @Trace public currentItem: ProjectItem | undefined = undefined;
+
   private context: common.UIAbilityContext;
   private timerId: number = -1;
   private targetEndTime: number = 0;
   private lastFeedbackSeconds: number = 0;
+
   private ttsManager: TTSManager = new TTSManager();
   private promptManager: PromptSoundManager = new PromptSoundManager();
   private reminderManager: CountdownReminderManager = new CountdownReminderManager();
-  // 【实况窗接入】：2. 声明实况窗实例
   private liveViewManager: CountdownLiveViewManager;
+
   private static instance: CountdownManager | undefined = undefined;
 
   public static getInstance(context: common.UIAbilityContext): CountdownManager {
@@ -53,7 +55,6 @@ export class CountdownManager {
 
   constructor(context: common.UIAbilityContext) {
     this.context = context;
-    // 【实况窗接入】：3. 初始化实况窗管理器
     this.liveViewManager = new CountdownLiveViewManager(context);
   }
 
@@ -84,12 +85,13 @@ export class CountdownManager {
   public async init(): Promise<void> {
     await this.ttsManager.init();
     await this.promptManager.init(this.context);
-
-    // 核心新增：App启动时，立刻从硬盘读取是否有未完成的倒计时
     await this.restoreStateFromDisk();
   }
 
   public start(item: ProjectItem): void {
+    // 【核心修复】：判断当前是否已经有倒计时在跑（或暂停）
+    let isAlreadyActive = (this.state === CountdownState.RUNNING || this.state === CountdownState.PAUSED);
+
     this.stopEngine();
     this.currentItem = item;
     this.remainingSeconds = item.projectTotalDuration * 60;
@@ -101,8 +103,12 @@ export class CountdownManager {
     this.startEngine();
     this.saveStateToDisk(); // 存盘
 
-    // 【实况窗接入】：4. 启动实况窗倒计时
-    this.liveViewManager.startLiveView(item.projectName, this.remainingSeconds);
+    // 【核心修复】：如果已经存在实况窗，必须调用 updateLiveView 进行无缝刷新
+    if (isAlreadyActive) {
+      this.liveViewManager.updateLiveView(item.projectName, this.remainingSeconds, false);
+    } else {
+      this.liveViewManager.startLiveView(item.projectName, this.remainingSeconds);
+    }
   }
 
   public pause(): void {
@@ -112,7 +118,6 @@ export class CountdownManager {
       this.ttsManager.speak("已暂停");
       this.saveStateToDisk(); // 存盘
 
-      // 【实况窗接入】：5. 暂停实况窗 (isPaused = true)
       let projName = this.currentItem?.projectName ?? "服务";
       this.liveViewManager.updateLiveView(projName, this.remainingSeconds, true);
     }
@@ -126,7 +131,6 @@ export class CountdownManager {
       this.ttsManager.speak("继续计时");
       this.saveStateToDisk(); // 存盘
 
-      // 【实况窗接入】：6. 恢复实况窗 (isPaused = false)
       let projName = this.currentItem?.projectName ?? "服务";
       this.liveViewManager.updateLiveView(projName, this.remainingSeconds, false);
     }
@@ -139,7 +143,6 @@ export class CountdownManager {
     this.ttsManager.speak("已取消");
     this.saveStateToDisk(); // 存盘
 
-    // 【实况窗接入】：7. 关闭实况窗
     this.liveViewManager.stopLiveView();
   }
 
@@ -168,7 +171,7 @@ export class CountdownManager {
       TimerStore.dispatch(TimerAction.TimerServiceRecordAdd.setPayload(record));
     }
 
-    this.saveStateToDisk(); // 存盘（标记为已结束）
+    this.saveStateToDisk(); // 存盘
     this.liveViewManager.stopLiveView();
   }
 
@@ -176,7 +179,7 @@ export class CountdownManager {
     this.stopEngine();
     this.ttsManager.release();
     this.promptManager.release();
-    this.liveViewManager.stopLiveView();
+    // 删除了主动 stopLiveView，交由系统回收机制处理
   }
 
   private startEngine(): void {
@@ -241,7 +244,7 @@ export class CountdownManager {
         currentItem: this.currentItem
       };
       await pref.put(KEY_STATE, JSON.stringify(data));
-      await pref.flush(); // 强制写入物理硬盘
+      await pref.flush();
     } catch (e) {
       console.error(`CountdownManager: 存盘失败`);
     }
@@ -257,7 +260,6 @@ export class CountdownManager {
 
       let data = JSON.parse(val) as SavedCountdownData;
 
-      // 如果上次杀后台时处于空闲或已完成���不需要恢复
       if (data.state === CountdownState.IDLE || data.state === CountdownState.FINISHED) {
         return;
       }
@@ -275,13 +277,11 @@ export class CountdownManager {
         } else {
           this.remainingSeconds = Math.ceil(remainingMs / 1000);
           this.startEngine();
-          // 【实况窗接入】：杀后台重进时，重新呼出实况窗
           this.liveViewManager.startLiveView(projName, this.remainingSeconds);
         }
       } else if (data.state === CountdownState.PAUSED) {
         this.remainingSeconds = data.remainingSeconds;
         this.targetEndTime = data.targetEndTime;
-        // 【实况窗接入】：恢复为暂停状态的实况窗
         this.liveViewManager.startLiveView(projName, this.remainingSeconds);
         this.liveViewManager.updateLiveView(projName, this.remainingSeconds, true);
       }

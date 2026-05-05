@@ -7,11 +7,11 @@
         "material": {
           "certpath": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001AAF34578EE7F1F833676A7524652DDE0567FA1E0AB4D7E3F06ECDB6A09306B78A2F230B057D71",
+          "keyPassword": "0000001A2806EF65B57871E68F72A804F1A9EC359F62CCCF2D42A76AA7EB0516AC570A7E0B8EBDBE9744",
           "profile": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.p12",
-          "storePassword": "0000001ACE6CECA7C7F30A3043D02CD064D6E3838F9D59B631C503FCE2017C3DE96C6BD3D7384547B21E"
+          "storePassword": "0000001A9E0019B6F029EEEAB2F71A2878E4CF1D9D3B35BA611D69E203A195C64F90599F53DE0880F5D0"
         }
       }
     ],
@@ -45,14 +45,6 @@
           {
             "name": "Push Kit",
             "capability": "com.huawei.service.push.base_service"
-          },
-          {
-            "name": "Device status detection",
-            "capability": "com.huawei.service.device_security.device_verify"
-          },
-          {
-            "name": "Safety Detect",
-            "capability": "com.huawei.service.device_security.safety_detect"
           }
         ]
       }

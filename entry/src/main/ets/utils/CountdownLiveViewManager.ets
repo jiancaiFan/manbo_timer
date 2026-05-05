@@ -1,9 +1,11 @@
 import { liveViewManager } from '@kit.LiveViewKit';
 import { Want, wantAgent, WantAgent, common } from '@kit.AbilityKit';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 export class CountdownLiveViewManager {
-  private static readonly LIVE_VIEW_ID = 10086;
+  private static readonly LIVE_VIEW_ID: number = 8;
   private context: common.UIAbilityContext;
+  private sequence: number = 0;
 
   constructor(context: common.UIAbilityContext) {
     this.context = context;
@@ -13,13 +15,14 @@ export class CountdownLiveViewManager {
   public async startLiveView(projectName: string, remainingSeconds: number): Promise<void> {
     try {
       let isEnabled: boolean = await liveViewManager.isLiveViewEnabled();
-      if (!isEnabled) {
-        return;
-      }
+      if (!isEnabled) return;
+
+      this.sequence = 1;
       let viewData: liveViewManager.LiveView = await this.buildTimerView(projectName, remainingSeconds, false);
       await liveViewManager.startLiveView(viewData);
     } catch (error) {
-      console.error('CountdownLiveView start error');
+      let err = error as BusinessError;
+      console.error(`CountdownLiveView start error: ${err.code} ${err.message}`);
     }
   }
 
@@ -27,13 +30,14 @@ export class CountdownLiveViewManager {
   public async updateLiveView(projectName: string, remainingSeconds: number, isPaused: boolean): Promise<void> {
     try {
       let isEnabled: boolean = await liveViewManager.isLiveViewEnabled();
-      if (!isEnabled) {
-        return;
-      }
+      if (!isEnabled) return;
+
+      this.sequence += 1;
       let viewData: liveViewManager.LiveView = await this.buildTimerView(projectName, remainingSeconds, isPaused);
       await liveViewManager.updateLiveView(viewData);
     } catch (error) {
-      console.error('CountdownLiveView update error');
+      let err = error as BusinessError;
+      console.error(`CountdownLiveView update error: ${err.code} ${err.message}`);
     }
   }
 
@@ -41,41 +45,69 @@ export class CountdownLiveViewManager {
   public async stopLiveView(): Promise<void> {
     try {
       let isEnabled: boolean = await liveViewManager.isLiveViewEnabled();
-      if (!isEnabled) {
-        return;
-      }
-      let viewData: liveViewManager.LiveView = await this.buildTimerView("结束", 0, true);
+      if (!isEnabled) return;
+
+      this.sequence += 1;
+      let viewData: liveViewManager.LiveView = await this.buildTimerView("已结束", 0, true);
+
+      viewData.liveViewData.capsule = {
+        type: liveViewManager.CapsuleType.CAPSULE_TYPE_TEXT,
+        status: 1,
+        title: "已结束"
+      };
+
       await liveViewManager.stopLiveView(viewData);
     } catch (error) {
-      console.error('CountdownLiveView stop error');
+      let err = error as BusinessError;
+      console.error(`CountdownLiveView stop error: ${err.code} ${err.message}`);
     }
   }
 
-  // 构造实况窗请求体，严格对标官方 timer 规范
-  private async buildTimerView(projectName: string, remainingSeconds: number,
-    isPaused: boolean): Promise<liveViewManager.LiveView> {
-    // 首先利用对象字面量完美构造基础视图，消除类型推导报错
+  // 构造实况窗请求体：极简视觉优化版
+  private async buildTimerView(projectName: string, remainingSeconds: number, isPaused: boolean): Promise<liveViewManager.LiveView> {
     let view: liveViewManager.LiveView = {
       id: CountdownLiveViewManager.LIVE_VIEW_ID,
       event: "TIMER",
+      sequence: this.sequence,
+      isMute: false,
       timer: {
-        time: remainingSeconds * 1000, // 鸿蒙原生 timer 需要毫秒
-        isCountdown: true, // 开启倒计时模式
-        isPaused: isPaused             // 是否暂停
+        time: remainingSeconds * 1000,
+        isCountdown: true,
+        isPaused: isPaused
       },
       liveViewData: {
         primary: {
           title: projectName,
           content: [
-            { text: "剩余时间 " },
-            // 原生占位符：系统会自动接管跳秒
-            { text: "${placeholder.timer}", textColor: "#FFFF0000" }
-          ]
+            // 【美化 1】：用极其克制的单点占位符，代替啰嗦的“正在倒计时”，让左侧留白
+            { text: isPaused ? "已暂停" : "专注中..." }
+          ],
+          keepTime: 15,
+          layoutData: {
+            layoutType: liveViewManager.LayoutType.LAYOUT_TYPE_PICKUP,
+            title: "剩余时间",
+            content: '${placeholder.timer}',
+            // 【美化 2】：把那条难看的蓝/绿色下划线彻底变透明！
+            underlineColor: '#00000000',
+            descPic: 'timer.png'
+          },
+          extensionData: {
+            type: liveViewManager.ExtensionType.EXTENSION_TYPE_DEFAULT
+          }
+        },
+        capsule: {
+          type: liveViewManager.CapsuleType.CAPSULE_TYPE_TIMER,
+          status: 1,
+          icon: 'capsule_timer.png',
+          // 【美化 3】：换成更高级的沉稳黑蓝色系 (或者你App的主题色)
+          backgroundColor: '#FF1E1E1E',
+          time: remainingSeconds * 1000,
+          isCountdown: true,
+          isPaused: isPaused
         }
       }
     };
 
-    // 规范的 try...catch 拦截异常，消除 throws 警告
     try {
       let targetWant: Want = {
         bundleName: this.context.abilityInfo.bundleName,
@@ -84,14 +116,12 @@ export class CountdownLiveViewManager {
 
       let wantAgentInfo: wantAgent.WantAgentInfo = {
         wants: [targetWant],
-        operationType: wantAgent.OperationType.START_ABILITY,
+        actionType: wantAgent.OperationType.START_ABILITIES,
         requestCode: 0,
-        wantAgentFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
+        actionFlags: [wantAgent.WantAgentFlags.UPDATE_PRESENT_FLAG]
       };
 
       let agent: WantAgent = await wantAgent.getWantAgent(wantAgentInfo);
-
-      // 创建成功后，再动态挂载到点击事件上
       view.liveViewData.primary.clickAction = agent;
     } catch (error) {
       console.error('CountdownLiveView buildWantAgent error');

@@ -3,6 +3,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { GlobalContext } from '../common/GlobalContext';
 import { CountdownManager } from '../utils/CountdownManager';
+import { pushService } from '@kit.PushKit';
 
 const DOMAIN = 0x0000;
 
@@ -50,5 +51,15 @@ export default class EntryAbility extends UIAbility {
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+  }
+
+  private async getPushToken() {
+    try {
+      const token: string = await pushService.getToken();
+      hilog.info(0x0000, 'PushToken', `当前设备的: ${token}`);
+    } catch (err) {
+      let e = err as Error;
+      hilog.error(0x0000, 'PushToken', '获取 PushToken 失败: %{public}s', e.message);
+    }
   }
 }
