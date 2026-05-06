@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.cer",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001A2806EF65B57871E68F72A804F1A9EC359F62CCCF2D42A76AA7EB0516AC570A7E0B8EBDBE9744",
-          "profile": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.p7b",
+          "storeFile": "/Users/ericfan/DevEcoStudioProjects/releasekey/manbo_release_key.p12",
+          "storePassword": "0000001DBF1C67A6CBABFF53D9D3ADCC899CF839968E7162E8A026A75F8420F0B5522F2814B93DC3C6820D83D8",
+          "keyAlias": "manbo_release",
+          "keyPassword": "0000001D35928E7BA51EA8AF2AC190FC413EACDCB777833B8A7674537EA1E25C227AEA89D3BDC0753BECD799A5",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/ericfan/.ohos/config/default_ManBoTimer_n8NWZT2hWy5rFH0LagEtuPpeSGSrPgqhMtETVQwsDao=.p12",
-          "storePassword": "0000001A9E0019B6F029EEEAB2F71A2878E4CF1D9D3B35BA611D69E203A195C64F90599F53DE0880F5D0"
+          "profile": "/Users/ericfan/Downloads/manbo_debugDebug.p7b",
+          "certpath": "/Users/ericfan/Downloads/manbo_debug.cer"
         }
       }
     ],

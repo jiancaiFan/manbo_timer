@@ -107,11 +107,11 @@ export struct HomeProjectListItem {
     .padding({ top: 16, bottom: 16, left: 16, right: 24 })
     .backgroundColor($r('sys.color.ohos_fa_list_card_bg'))
     .borderRadius(40)
-    .border({ width: 1, color: this.isPressed ? 'rgba(0,0,0,0.06)' : 'rgba(0,0,0,0.03)' })
     .shadow({
-      radius: this.isPressed ? 45 : 24,
-      color: this.isPressed ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0.015)',
-      offsetY: this.isPressed ? 12 : 4
+      radius: this.isPressed ? 15 : 30,
+      color: this.isPressed ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.08)',
+      offsetX: 0,
+      offsetY: this.isPressed ? 3 : 8
     })
     .animation({ duration: 500, curve: Curve.FastOutSlowIn })
     .clip(true)
@@ -165,8 +165,8 @@ export struct HomeProjectListItem {
         .letterSpacing(-0.5)
     }
     .padding({ top: 4, bottom: 4, left: 10, right: 10 })
-    .backgroundColor('rgba(0,0,0,0.03)')
-    .border({ width: 1, color: 'rgba(0,0,0,0.02)' })
+    .backgroundColor($r('sys.color.ohos_id_color_component_normal_transparent'))
+    .border({ width: 1, color: $r('sys.color.comp_divider') })
     .borderRadius(999)
   }
 }

@@ -9,9 +9,8 @@ struct TimerPage {
   private viewModel: TimerViewModel = new TimerViewModel();
 
   build() {
-    // 1. 在最外层添加 Scroll 组件
     Scroll() {
-      Column() {
+      Column({space: 40}) {
         TimerTopActionBar()
 
         TimerTopProgressCard({
@@ -36,9 +35,6 @@ struct TimerPage {
           },
           onFinish: () => {
             this.viewModel.finishTimer()
-          },
-          onAddExtraTime: (minutes: number) => {
-            this.viewModel.addExtraTime(minutes)
           }
         })
       }
@@ -47,6 +43,7 @@ struct TimerPage {
     }
     .width('100%')
     .height('100%')
+    .padding({left: '16', right: '16'})
     .align(Alignment.Top)
     .scrollBar(BarState.Off)
   }

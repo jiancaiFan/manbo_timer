@@ -114,7 +114,6 @@ export struct TimerImmersiveDial {
       .shadow({ radius: 30, color: 'rgba(14, 165, 233, 0.2)', offsetY: 15 })
     }
     .width('100%')
-    .padding({ top: 16, bottom: 16 })
     .alignItems(HorizontalAlign.Center)
     .justifyContent(FlexAlign.Center)
     .onVisibleAreaChange([0.0, 1.0], (isVisible: boolean) => {

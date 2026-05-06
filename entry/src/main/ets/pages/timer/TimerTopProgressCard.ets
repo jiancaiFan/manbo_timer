@@ -6,8 +6,8 @@ export struct TimerTopProgressCard {
   @Param statusText: string = "正进行";
   @Param progress: number = 65;
 
-  @Local private isVisible: boolean = false;
-  @Local private currentWidth: number = 0;
+  @Local isVisible: boolean = false;
+  @Local currentWidth: number = 0;
 
   @Monitor("progress")
   onProgressChange() {
@@ -73,7 +73,6 @@ export struct TimerTopProgressCard {
       .layoutWeight(1)
       .padding({ right: 2 })
     }
-    .margin({ left: 16, right: 16 })
     .padding(16)
     .backgroundColor('#FFFFFF')
     .borderRadius(45)

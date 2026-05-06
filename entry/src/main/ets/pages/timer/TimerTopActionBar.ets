@@ -25,7 +25,6 @@ export struct TimerTopActionBar {
       .onClick(() => this.onNavigateSettings())
     }
     .width('100%')
-    .padding({ left: 16, right: 16, bottom: 16 })
     .justifyContent(FlexAlign.SpaceBetween)
     .alignItems(VerticalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_background_transparent'))
