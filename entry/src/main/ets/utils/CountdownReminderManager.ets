@@ -3,18 +3,22 @@ import { reminderAgentManager } from '@kit.BackgroundTasksKit';
 export class CountdownReminderManager {
   private reminderIds: number[] = [];
 
-  // 一次性注册所有需要的间隔提醒和结束提醒
   public async scheduleReminders(remainingSeconds: number, intervalSeconds: number,
     projectName: string): Promise<void> {
-    await this.cancelAll(); // 注册新任务前先清理旧任务
+    await this.cancelAll(); // 注册新任务前先清理旧任务和底层残留
 
     try {
       let count = Math.floor(remainingSeconds / intervalSeconds);
 
-      // 1. 循环注册每一个“间隔提醒”
       for (let i = 1; i <= count; i++) {
-        let triggerSeconds = remainingSeconds - (remainingSeconds - i * intervalSeconds);
-        let remainMin = Math.floor((remainingSeconds - triggerSeconds) / 60);
+        let targetRemaining = i * intervalSeconds;
+
+        if (targetRemaining === remainingSeconds) {
+          continue;
+        }
+
+        let triggerSeconds = remainingSeconds - targetRemaining;
+        let remainMin = Math.floor(targetRemaining / 60);
 
         if (triggerSeconds > 0 && triggerSeconds < remainingSeconds) {
           let reqTimer: reminderAgentManager.ReminderRequestTimer = {
@@ -29,7 +33,6 @@ export class CountdownReminderManager {
         }
       }
 
-      // 2. 注册最终的“倒计时结束提醒”
       if (remainingSeconds > 0) {
         let reqFinish: reminderAgentManager.ReminderRequestTimer = {
           reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_TIMER,
@@ -46,15 +49,14 @@ export class CountdownReminderManager {
     }
   }
 
-  // 清除所有已注册的系统提醒，防止取消任务后系统依然瞎叫
   public async cancelAll(): Promise<void> {
-    for (let id of this.reminderIds) {
-      try {
-        await reminderAgentManager.cancelReminder(id);
-      } catch (error) {
-        // 静默忽略清理失败
-      }
+    try {
+      this.reminderIds = [];
+
+      await reminderAgentManager.cancelAllReminders();
+
+    } catch (error) {
+      console.error(`CountdownReminderManager cancelAll error`);
     }
-    this.reminderIds = [];
   }
 }

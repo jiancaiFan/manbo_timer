@@ -36,7 +36,7 @@ export class CountdownManager {
   private context: common.UIAbilityContext;
   private timerId: number = -1;
   private targetEndTime: number = 0;
-  private lastFeedbackSeconds: number = 0;
+  private nextFeedbackSeconds: number = -1;
 
   private ttsManager: TTSManager = new TTSManager();
   private promptManager: PromptSoundManager = new PromptSoundManager();
@@ -94,7 +94,8 @@ export class CountdownManager {
     this.currentItem = item;
     this.remainingSeconds = item.projectTotalDuration * 60;
     this.targetEndTime = Date.now() + this.remainingSeconds * 1000;
-    this.lastFeedbackSeconds = this.remainingSeconds;
+    this.calculateNextFeedbackNode();
+
     this.state = CountdownState.RUNNING;
 
     this.ttsManager.speak(`开始项目 ${item.projectName}`);
@@ -113,7 +114,7 @@ export class CountdownManager {
       this.state = CountdownState.PAUSED;
       this.stopEngine();
       this.ttsManager.speak("已暂停");
-      this.saveStateToDisk(); // 存盘
+      this.saveStateToDisk();
 
       let projName = this.currentItem?.projectName ?? "服务";
       this.liveViewManager.updateLiveView(projName, this.remainingSeconds, true);
@@ -124,9 +125,11 @@ export class CountdownManager {
     if (this.state === CountdownState.PAUSED) {
       this.state = CountdownState.RUNNING;
       this.targetEndTime = Date.now() + this.remainingSeconds * 1000;
+      this.calculateNextFeedbackNode();
+
       this.startEngine();
       this.ttsManager.speak("继续计时");
-      this.saveStateToDisk(); // 存盘
+      this.saveStateToDisk();
 
       let projName = this.currentItem?.projectName ?? "服务";
       this.liveViewManager.updateLiveView(projName, this.remainingSeconds, false);
@@ -138,7 +141,7 @@ export class CountdownManager {
     this.remainingSeconds = 0;
     this.stopEngine();
     this.ttsManager.speak("已取消");
-    this.saveStateToDisk(); // 存盘
+    this.saveStateToDisk();
 
     this.liveViewManager.stopLiveView();
   }
@@ -168,7 +171,7 @@ export class CountdownManager {
       TimerStore.dispatch(TimerAction.TimerServiceRecordAdd.setPayload(record));
     }
 
-    this.saveStateToDisk(); // 存盘
+    this.saveStateToDisk();
     this.liveViewManager.stopLiveView();
   }
 
@@ -176,7 +179,6 @@ export class CountdownManager {
     this.stopEngine();
     this.ttsManager.release();
     this.promptManager.release();
-    // 删除了主动 stopLiveView，交由系统回收机制处理
   }
 
   private startEngine(): void {
@@ -198,6 +200,15 @@ export class CountdownManager {
     this.reminderManager.cancelAll();
   }
 
+  private calculateNextFeedbackNode(): void {
+    let intervalSec = (this.currentItem?.projectIntervalDuration ?? 10) * 60;
+    let nextNode = Math.floor(this.remainingSeconds / intervalSec) * intervalSec;
+    if (nextNode === this.remainingSeconds) {
+      nextNode -= intervalSec; // 避免一开启就立刻播报当前时间
+    }
+    this.nextFeedbackSeconds = nextNode;
+  }
+
   public syncCurrentTime(): void {
     if (this.state !== CountdownState.RUNNING) {
       return;
@@ -212,28 +223,24 @@ export class CountdownManager {
 
     this.remainingSeconds = Math.ceil(remainingMs / 1000);
 
-    let intervalSec = (this.currentItem?.projectIntervalDuration ?? 10) * 60;
-    if (this.remainingSeconds !== this.lastFeedbackSeconds &&
-      this.remainingSeconds > 0 &&
-      this.remainingSeconds % intervalSec === 0) {
+    if (this.nextFeedbackSeconds > 0 && this.remainingSeconds <= this.nextFeedbackSeconds) {
+      this.triggerIntervalFeedback(this.nextFeedbackSeconds); // 传入该节点进行播报
 
-      this.lastFeedbackSeconds = this.remainingSeconds;
-      this.triggerIntervalFeedback();
+      let intervalSec = (this.currentItem?.projectIntervalDuration ?? 10) * 60;
+      this.nextFeedbackSeconds -= intervalSec;
     }
   }
 
-  private triggerIntervalFeedback(): void {
+  private triggerIntervalFeedback(feedbackSeconds: number): void {
     VibrationManager.vibrateAlarm(500);
     this.promptManager.play();
-    let min = Math.floor(this.remainingSeconds / 60);
+    let min = Math.floor(feedbackSeconds / 60);
     this.ttsManager.speak(`剩余 ${min} 分钟`);
   }
 
   private async saveStateToDisk(): Promise<void> {
     try {
       let pref = await preferences.getPreferences(this.context, PREF_NAME);
-
-      // 1. 定义外层的字典数据格式（完全避免 any 和 unknown）
       let dataToSave: Record<string, number | Record<string, string | number> | undefined> = {
         "state": this.state as number,
         "targetEndTime": this.targetEndTime,
@@ -241,7 +248,6 @@ export class CountdownManager {
         "currentItem": undefined
       };
 
-      // 2. 提取响应式数据到纯字典中
       if (this.currentItem !== undefined) {
         let itemRecord: Record<string, string | number> = {
           "projectName": this.currentItem.projectName,
@@ -249,15 +255,12 @@ export class CountdownManager {
           "projectAmount": this.currentItem.projectAmount
         };
 
-        // 针对可能为 undefined 的属性单独安全赋值
         if (this.currentItem.projectIntervalDuration !== undefined) {
           itemRecord["projectIntervalDuration"] = this.currentItem.projectIntervalDuration;
         }
 
         dataToSave["currentItem"] = itemRecord;
       }
-
-      // 3. 直接将 Record 序列化并存盘
       await pref.put(KEY_STATE, JSON.stringify(dataToSave));
       await pref.flush();
     } catch (e) {
@@ -291,6 +294,7 @@ export class CountdownManager {
           this.finish();
         } else {
           this.remainingSeconds = Math.ceil(remainingMs / 1000);
+          this.calculateNextFeedbackNode(); // 读盘恢复时也要重新计算节点
           this.startEngine();
           this.liveViewManager.startLiveView(projName, this.remainingSeconds);
         }
