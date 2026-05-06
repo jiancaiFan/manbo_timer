@@ -17,7 +17,6 @@ export enum CountdownState {
   FINISHED
 }
 
-// 定义存入硬盘的数据结构
 interface SavedCountdownData {
   state: CountdownState;
   targetEndTime: number;
@@ -89,7 +88,6 @@ export class CountdownManager {
   }
 
   public start(item: ProjectItem): void {
-    // 【核心修复】：判断当前是否已经有倒计时在跑（或暂停）
     let isAlreadyActive = (this.state === CountdownState.RUNNING || this.state === CountdownState.PAUSED);
 
     this.stopEngine();
@@ -101,9 +99,8 @@ export class CountdownManager {
 
     this.ttsManager.speak(`开始项目 ${item.projectName}`);
     this.startEngine();
-    this.saveStateToDisk(); // 存盘
+    this.saveStateToDisk();
 
-    // 【核心修复】：如果已经存在实况窗，必须调用 updateLiveView 进行无缝刷新
     if (isAlreadyActive) {
       this.liveViewManager.updateLiveView(item.projectName, this.remainingSeconds, false);
     } else {
@@ -232,18 +229,36 @@ export class CountdownManager {
     this.ttsManager.speak(`剩余 ${min} 分钟`);
   }
 
-  // ================= 持久化存储区 =================
-
   private async saveStateToDisk(): Promise<void> {
     try {
       let pref = await preferences.getPreferences(this.context, PREF_NAME);
-      let data: SavedCountdownData = {
-        state: this.state,
-        targetEndTime: this.targetEndTime,
-        remainingSeconds: this.remainingSeconds,
-        currentItem: this.currentItem
+
+      // 1. 定义外层的字典数据格式（完全避免 any 和 unknown）
+      let dataToSave: Record<string, number | Record<string, string | number> | undefined> = {
+        "state": this.state as number,
+        "targetEndTime": this.targetEndTime,
+        "remainingSeconds": this.remainingSeconds,
+        "currentItem": undefined
       };
-      await pref.put(KEY_STATE, JSON.stringify(data));
+
+      // 2. 提取响应式数据到纯字典中
+      if (this.currentItem !== undefined) {
+        let itemRecord: Record<string, string | number> = {
+          "projectName": this.currentItem.projectName,
+          "projectTotalDuration": this.currentItem.projectTotalDuration,
+          "projectAmount": this.currentItem.projectAmount
+        };
+
+        // 针对可能为 undefined 的属性单独安全赋值
+        if (this.currentItem.projectIntervalDuration !== undefined) {
+          itemRecord["projectIntervalDuration"] = this.currentItem.projectIntervalDuration;
+        }
+
+        dataToSave["currentItem"] = itemRecord;
+      }
+
+      // 3. 直接将 Record 序列化并存盘
+      await pref.put(KEY_STATE, JSON.stringify(dataToSave));
       await pref.flush();
     } catch (e) {
       console.error(`CountdownManager: 存盘失败`);

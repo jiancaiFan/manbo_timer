@@ -61,12 +61,4 @@ export class TimerViewModel {
   public finishTimer(): void {
     this.manager.finish();
   }
-
-  public addExtraTime(minutes: number): void {
-    if (!this.manager.currentItem) {
-      return;
-    }
-    this.manager.currentItem.projectTotalDuration += minutes;
-    this.manager.remainingSeconds += minutes * 60;
-  }
 }

@@ -74,7 +74,7 @@ export struct TimerTopProgressCard {
       .padding({ right: 2 })
     }
     .padding(16)
-    .backgroundColor('#FFFFFF')
+    .backgroundColor($r('sys.color.ohos_id_color_card_bg'))
     .borderRadius(45)
     .shadow({ radius: 35, color: 'rgba(0,0,0,0.03)', offsetY: 15 })
     .opacity(this.isVisible ? 1.0 : 0.0)
