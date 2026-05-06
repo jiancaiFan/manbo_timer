@@ -204,7 +204,7 @@ export class CountdownManager {
     let intervalSec = (this.currentItem?.projectIntervalDuration ?? 10) * 60;
     let nextNode = Math.floor(this.remainingSeconds / intervalSec) * intervalSec;
     if (nextNode === this.remainingSeconds) {
-      nextNode -= intervalSec; // 避免一开启就立刻播报当前时间
+      nextNode -= intervalSec; // 避免一开启就立刻播报当��时间
     }
     this.nextFeedbackSeconds = nextNode;
   }
@@ -224,10 +224,13 @@ export class CountdownManager {
     this.remainingSeconds = Math.ceil(remainingMs / 1000);
 
     if (this.nextFeedbackSeconds > 0 && this.remainingSeconds <= this.nextFeedbackSeconds) {
-      this.triggerIntervalFeedback(this.nextFeedbackSeconds); // 传入该节点进行播报
 
-      let intervalSec = (this.currentItem?.projectIntervalDuration ?? 10) * 60;
-      this.nextFeedbackSeconds -= intervalSec;
+      let delaySeconds = this.nextFeedbackSeconds - this.remainingSeconds;
+
+      if (delaySeconds <= 3) {
+        this.triggerIntervalFeedback(this.nextFeedbackSeconds);
+      }
+      this.calculateNextFeedbackNode();
     }
   }
 
